@@ -1,0 +1,30 @@
+@import "normalize", "fonts";
+
+:root {
+  --font-family-base: "Nunito", sans-serif;
+
+  --black: #172029;
+  --white: #ffffff;
+  --brand: #0073e6;
+  --brand-light-1: #99c7f5;
+  --brand-light-2: #e6f1fc;
+  --brand-light-3: #f2f6fa;
+  --gray: #808080;
+  --gray-light: #f2f2f2;
+  --accent: #fabc22;
+  --focus: #ed2c19;
+
+  --transition-duration: 0.2s;
+}
+
+body {
+  background-color: var(--brand-light-2);
+}
+
+.star-filled {
+  color: #ffd700; /* желтый цвет для заполненных звезд */
+}
+
+.star-empty {
+  color: #ccc; /* серый цвет для пустых звезд */
+}

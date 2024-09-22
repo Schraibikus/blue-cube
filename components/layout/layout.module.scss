@@ -1,0 +1,48 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-inline: 32px;
+  margin-top: 12px;
+  margin-bottom: 24px;
+  font-family: var(--font-family-base);
+  font-weight: 700;
+
+  & .navigation {
+    display: flex;
+    gap: 16px;
+
+    &__link {
+      font-size: 16px;
+      line-height: 24px;
+      color: var(--black);
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+        text-underline-offset: 8px;
+        color: var(--brand);
+      }
+
+      &_active {
+        text-decoration: underline;
+        text-underline-offset: 8px;
+        color: var(--brand);
+      }
+    }
+  }
+
+  & .cart {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    line-height: 24px;
+    color: var(--black);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--brand);
+    }
+  }
+}
