@@ -24,7 +24,13 @@ export default function Layout({ children }: PropsWithChildren) {
       <div className={styles.container}>
         <header className={styles.header}>
           <Link href="/">
-            <Image src="/svg/brand.svg" alt="logo" width={150} height={24} />
+            <Image
+              src="/svg/brand.svg"
+              alt="logo"
+              width={150}
+              height={24}
+              priority
+            />
           </Link>
           <div className={styles.navigation}>
             <Link
@@ -54,7 +60,13 @@ export default function Layout({ children }: PropsWithChildren) {
               router.pathname === "/cart" && styles.navigation__link_active
             )}
           >
-            <Image src="/svg/cart.svg" alt="cart" width={20} height={20} />
+            <Image
+              src="/svg/cart.svg"
+              alt="cart"
+              width={20}
+              height={20}
+              priority
+            />
             Корзина
             {cartCount === 0 ? (
               ""

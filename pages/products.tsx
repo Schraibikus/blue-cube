@@ -1,11 +1,10 @@
 import axios from "axios";
 import Image from "next/image";
-// import DOMPurify from "dompurify";
 
 import Layout from "@/components/layout/layout";
 import { useEffect, useState } from "react";
-import "@/styles/globals.scss";
 import styles from "@/styles/products.module.scss";
+import { useRouter } from "next/router";
 
 export const API_URL =
   "https://skillfactory-task.detmir.team/products?page=1&limit=50";
@@ -21,20 +20,20 @@ export interface ProductsItem {
 }
 
 export default function Products() {
+  const { push } = useRouter();
+
   const [items, setItems] = useState<ProductsItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); //убрать на финале - нужно только для отладки
 
   const load = async () => {
     try {
       const data = await axios.get(API_URL);
-      // console.log("data", data);
       items.push(data.data.data);
       setItems([...items]);
-      console.log(items);
     } catch (e) {
       console.log(e);
     } finally {
-      setLoading(false);
+      setLoading(false); //убрать на финале - нужно только для отладки
     }
   };
 
@@ -42,52 +41,52 @@ export default function Products() {
     load();
   }, []);
 
+  //убрать на финале - нужно только для отладки
   if (loading) {
     return <Layout>... loading ...</Layout>;
   }
 
-  // async function getProducts() {
-  //   const { data } = await axios.get(API_URL);
-  //   items.push(data.data);
-  //   setItems([...items]);
-  //   console.log(items);
-  // }
+  function truncateText(text: string, limit: number): string {
+    return (
+      text.split(" ").slice(0, limit).join(" ") +
+      (text.split(" ").length > limit ? "..." : "")
+    );
+  }
 
   return (
     <Layout>
-      {/* <button type="button" onClick={getProducts}>
-        Get data
-      </button> */}
       <div className={styles.products}>
         {items.length ? (
           items.flat().map((elem) => (
-            <div key={elem.id} className={styles.product}>
+            <div
+              key={elem.id}
+              className={styles.card}
+              onClick={() => push(`/products/${elem.id}`)}
+            >
               <Image
                 src={elem.picture}
-                alt={elem.title}
-                width={200}
-                height={200}
-                loading="lazy"
+                alt={truncateText(elem.title, 2)}
+                width={250}
+                height={250}
+                priority
               />
-              <p>{elem.title}</p>
-              {/* <div
-                  dangerouslySetInnerHTML={{
-                    __html: DOMPurify.sanitize(elem.description),
-                  }}
-                ></div>
-                <div>{elem.rating}</div> */}
-              <div>
-                Рейтинг:
+
+              <div className={styles.card__title}>{elem.title}</div>
+              <div className={styles.card__rating}>
                 {[...Array(5)].map((_, i) => (
                   <span
                     key={i}
-                    className={i < elem.rating ? "star-filled" : "star-empty"}
+                    className={
+                      i < elem.rating
+                        ? `${styles.card__rating_starFilled}`
+                        : `${styles.card__rating_starEmpty}`
+                    }
                   >
                     &#9733;
                   </span>
                 ))}
               </div>
-              <div>{elem.price} &#8381;</div>
+              <div className={styles.card__price}>{elem.price} &#8381;</div>
             </div>
           ))
         ) : (
