@@ -16,7 +16,6 @@ export async function getServerSideProps({
   params: { id: number };
 }) {
   const url = `${API_URL}/${params.id}`;
-  // console.log(url);
   const { data } = await axios.get<ProductsItem>(url);
   return {
     props: { productsItem: data },

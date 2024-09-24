@@ -126,6 +126,7 @@ export default function Products() {
         <button
           className={styles.pagination__button}
           type="button"
+          disabled={currentPage === 1}
           onClick={() => handleMinus()}
         >
           <Image
@@ -139,6 +140,7 @@ export default function Products() {
         <button
           className={styles.pagination__button}
           type="button"
+          disabled={currentPage === 14}
           onClick={() => handlePlus()}
         >
           <Image
