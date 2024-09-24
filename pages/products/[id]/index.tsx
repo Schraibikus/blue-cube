@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Layout from "@/components/layout/layout";
 import styles from "@/styles/products.module.scss";
-import { ProductsItem } from "@/pages/products";
+import { ProductsItem, API_URL } from "@/pages/products";
 import axios from "axios";
 import DOMPurify from "dompurify";
 
@@ -10,15 +10,13 @@ interface ItemProps {
   productsItem: ProductsItem;
 }
 
-const API_URL = "https://skillfactory-task.detmir.team/products";
-
 export async function getServerSideProps({
   params,
 }: {
   params: { id: number };
 }) {
   const url = `${API_URL}/${params.id}`;
-  console.log(url);
+  // console.log(url);
   const { data } = await axios.get<ProductsItem>(url);
   return {
     props: { productsItem: data },

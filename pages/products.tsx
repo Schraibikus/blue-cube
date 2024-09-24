@@ -6,8 +6,7 @@ import { useEffect, useState } from "react";
 import styles from "@/styles/products.module.scss";
 import { useRouter } from "next/router";
 
-export const API_URL =
-  "https://skillfactory-task.detmir.team/products?page=1&limit=50";
+export const API_URL = "https://skillfactory-task.detmir.team/products";
 
 export interface ProductsItem {
   id: string;
@@ -25,11 +24,12 @@ export default function Products() {
   const [items, setItems] = useState<ProductsItem[]>([]);
   const [loading, setLoading] = useState(true); //убрать на финале - нужно только для отладки
 
-  const load = async () => {
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const load = async (page: number) => {
     try {
-      const data = await axios.get(API_URL);
-      items.push(data.data.data);
-      setItems([...items]);
+      const itemsResponse = await axios.get(`${API_URL}?page=${page}&limit=15`);
+      setItems(itemsResponse.data.data);
     } catch (e) {
       console.log(e);
     } finally {
@@ -38,12 +38,41 @@ export default function Products() {
   };
 
   useEffect(() => {
-    load();
-  }, []);
+    load(currentPage);
+  }, [currentPage]);
 
   //убрать на финале - нужно только для отладки
   if (loading) {
     return <Layout>... loading ...</Layout>;
+  }
+
+  function createButtons() {
+    const buttons = [];
+    for (let i = 0; i < 14; i++) {
+      buttons.push(
+        <button
+          key={i}
+          className={`${styles.pagination__button}${
+            i + 1 === currentPage ? ` ${styles.pagination__button_active}` : ""
+          }`}
+          onClick={() => handleButton(i)}
+        >
+          {i + 1}
+        </button>
+      );
+    }
+    return buttons;
+  }
+  function handleButton(page: number) {
+    console.log(page);
+    setCurrentPage(page + 1);
+  }
+
+  function handleMinus() {
+    setCurrentPage(currentPage - 1);
+  }
+  function handlePlus() {
+    setCurrentPage(currentPage + 1);
   }
 
   function truncateText(text: string, limit: number): string {
@@ -57,7 +86,7 @@ export default function Products() {
     <Layout>
       <div className={styles.products}>
         {items.length ? (
-          items.flat().map((elem) => (
+          items.map((elem) => (
             <div
               key={elem.id}
               className={styles.card}
@@ -93,6 +122,33 @@ export default function Products() {
           <p>No data</p>
         )}
       </div>
+      <section className={styles.pagination}>
+        <button
+          className={styles.pagination__button}
+          type="button"
+          onClick={() => handleMinus()}
+        >
+          <Image
+            src="/svg/arrow-left.svg"
+            width={20}
+            height={20}
+            alt="arrow left"
+          />
+        </button>
+        {createButtons()}
+        <button
+          className={styles.pagination__button}
+          type="button"
+          onClick={() => handlePlus()}
+        >
+          <Image
+            src="/svg/arrow-right.svg"
+            width={20}
+            height={20}
+            alt="arrow right"
+          />
+        </button>
+      </section>
     </Layout>
   );
 }
