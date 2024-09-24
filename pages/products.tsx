@@ -64,15 +64,7 @@ export default function Products() {
     return buttons;
   }
   function handleButton(page: number) {
-    console.log(page);
     setCurrentPage(page + 1);
-  }
-
-  function handleMinus() {
-    setCurrentPage(currentPage - 1);
-  }
-  function handlePlus() {
-    setCurrentPage(currentPage + 1);
   }
 
   function truncateText(text: string, limit: number): string {
@@ -90,6 +82,7 @@ export default function Products() {
             <div
               key={elem.id}
               className={styles.card}
+              data-id={elem.id} //убрать на финале - нужно только для отладки
               onClick={() => push(`/products/${elem.id}`)}
             >
               <Image
@@ -97,9 +90,15 @@ export default function Products() {
                 alt={truncateText(elem.title, 2)}
                 width={250}
                 height={250}
-                priority
+                onError={() => {
+                  const imageElement = document.querySelector(
+                    `.card[data-id="${elem.id}"] img`
+                  );
+                  if (imageElement) {
+                    (imageElement as HTMLImageElement).src = "/not-image.jpg";
+                  }
+                }}
               />
-
               <div className={styles.card__title}>{elem.title}</div>
               <div className={styles.card__rating}>
                 {[...Array(5)].map((_, i) => (
@@ -119,7 +118,7 @@ export default function Products() {
             </div>
           ))
         ) : (
-          <p>No data</p>
+          <div>No items found</div>
         )}
       </div>
       <section className={styles.pagination}>
@@ -127,7 +126,7 @@ export default function Products() {
           className={styles.pagination__button}
           type="button"
           disabled={currentPage === 1}
-          onClick={() => handleMinus()}
+          onClick={() => setCurrentPage(currentPage - 1)}
         >
           <Image
             src="/svg/arrow-left.svg"
@@ -141,7 +140,7 @@ export default function Products() {
           className={styles.pagination__button}
           type="button"
           disabled={currentPage === 14}
-          onClick={() => handlePlus()}
+          onClick={() => setCurrentPage(currentPage + 1)}
         >
           <Image
             src="/svg/arrow-right.svg"
