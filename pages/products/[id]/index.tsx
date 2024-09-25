@@ -2,9 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import Layout from "@/components/layout/layout";
 import styles from "@/styles/products.module.scss";
-import { ProductsItem, API_URL } from "@/pages/products";
+import { API_URL } from "@/pages/products";
 import axios from "axios";
 import DOMPurify from "dompurify";
+import { Item as ProductsItem } from "@/store/itemsSlice";
 
 interface ItemProps {
   productsItem: ProductsItem;

@@ -12,8 +12,12 @@ export const API_URL = "https://skillfactory-task.detmir.team/products";
 export default function Products() {
   const LIMIT_PAGES = 14;
 
+  const { push } = useRouter();
   const dispatch = useAppDispatch();
   const page = useAppSelector((state) => state.page.page);
+  const items = useAppSelector((state) => state.items.items);
+  const loading = useAppSelector((state) => state.items.loading);
+  const error = useAppSelector((state) => state.items.error);
 
   const nextPages = () => {
     dispatch(nextPage(1));
@@ -23,19 +27,17 @@ export default function Products() {
     dispatch(nextPage(-1));
   };
 
-  const { push } = useRouter();
-
-  const items = useAppSelector((state) => state.items.items);
-  const loading = useAppSelector((state) => state.items.loading);
-  // const error = useAppSelector((state) => state.items.error);
-
   useEffect(() => {
     dispatch(fetchItems(page));
   }, [dispatch, page]);
 
   //убрать на финале - нужно только для отладки
   if (loading) {
-    return <Layout>... loading ...</Layout>;
+    return (
+      <Layout>
+        <div className={styles.loading}>... loading ...</div>
+      </Layout>
+    );
   }
 
   function createButtons() {
@@ -110,7 +112,7 @@ export default function Products() {
             </div>
           ))
         ) : (
-          <div>No items found</div>
+          <div>{error}</div>
         )}
       </div>
       <section className={styles.pagination}>
