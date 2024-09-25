@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type PageState = {
   page: number;
@@ -12,10 +12,10 @@ const pageSlice = createSlice({
   name: "page",
   initialState,
   reducers: {
-    nextPage(state, action) {
+    nextPage(state, action: PayloadAction<number>) {
       state.page += action.payload;
     },
-    currentPage(state, action) {
+    currentPage(state, action: PayloadAction<number>) {
       state.page = action.payload + 1;
     },
   },
