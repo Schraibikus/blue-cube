@@ -1,34 +1,69 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { ProductsItem } from "@/pages/products";
+import {
+  Action,
+  createAsyncThunk,
+  createSlice,
+  PayloadAction,
+} from "@reduxjs/toolkit";
+import { API_URL } from "@/pages/products";
+import axios from "axios";
 
-const initialState = {
-  items: [] as ProductsItem[],
+export type Item = {
+  id: string;
+  category: string;
+  title: string;
+  description: string;
+  picture: string;
+  rating: number;
+  price: number;
+};
+
+type ItemsState = {
+  items: Item[];
+  loading: boolean;
+  error: string | null;
+};
+
+const initialState: ItemsState = {
+  items: [],
   loading: false,
   error: null,
 };
 
+export const fetchItems = createAsyncThunk<
+  Item[],
+  number,
+  { rejectValue: string }
+>("items/fetchItems", async function (page, { rejectWithValue }) {
+  const itemsResponse = await axios.get(`${API_URL}?page=${page}&limit=15`);
+  if (!itemsResponse) {
+    return rejectWithValue("Network response was not ok");
+  }
+  const data = await itemsResponse.data.data;
+  return data;
+});
+
 const itemsSlice = createSlice({
   name: "items",
   initialState,
-  reducers: {
-    fetchItems(state) {
+  reducers: {},
+  extraReducers(builder) {
+    builder.addCase(fetchItems.pending, (state) => {
       state.loading = true;
       state.error = null;
-      state.items = [];
-    },
-    fetchItemsSuccess(state, action) {
+    });
+    builder.addCase(fetchItems.fulfilled, (state, action) => {
       state.loading = false;
-      state.error = null;
       state.items = action.payload;
-    },
-    fetchItemsError(state, action) {
-      state.loading = false;
+    });
+    builder.addMatcher(isError, (state, action: PayloadAction<string>) => {
       state.error = action.payload;
-      state.items = [];
-    },
+      state.loading = false;
+    });
   },
 });
 
-export const { fetchItems, fetchItemsSuccess, fetchItemsError } =
-  itemsSlice.actions;
 export default itemsSlice.reducer;
+
+function isError(action: Action) {
+  return action.type.endsWith("rejected");
+}

@@ -1,59 +1,37 @@
-import axios from "axios";
 import Image from "next/image";
-
 import Layout from "@/components/layout/layout";
-import { useEffect, useState } from "react";
 import styles from "@/styles/products.module.scss";
 import { useRouter } from "next/router";
-
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import { currentPage, nextPage } from "@/store/pageSlice";
+import { useEffect } from "react";
+import { fetchItems } from "@/store/itemsSlice";
 
 export const API_URL = "https://skillfactory-task.detmir.team/products";
-
-export interface ProductsItem {
-  id: string;
-  category: string;
-  title: string;
-  description: string;
-  picture: string;
-  rating: number;
-  price: number;
-}
 
 export default function Products() {
   const LIMIT_PAGES = 14;
 
-  const dispath = useAppDispatch();
+  const dispatch = useAppDispatch();
   const page = useAppSelector((state) => state.page.page);
 
   const nextPages = () => {
-    dispath(nextPage(1));
+    dispatch(nextPage(1));
   };
 
   const undoPages = () => {
-    dispath(nextPage(-1));
+    dispatch(nextPage(-1));
   };
 
   const { push } = useRouter();
 
-  const [items, setItems] = useState<ProductsItem[]>([]);
-  const [loading, setLoading] = useState(true); //убрать на финале - нужно только для отладки
-
-  const load = async (page: number) => {
-    try {
-      const itemsResponse = await axios.get(`${API_URL}?page=${page}&limit=15`);
-      setItems(itemsResponse.data.data);
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setLoading(false); //убрать на финале - нужно только для отладки
-    }
-  };
+  const items = useAppSelector((state) => state.items.items);
+  const loading = useAppSelector((state) => state.items.loading);
+  // const error = useAppSelector((state) => state.items.error);
 
   useEffect(() => {
-    load(page);
-  }, [page]);
+    dispatch(fetchItems(page));
+  }, [dispatch, page]);
 
   //убрать на финале - нужно только для отладки
   if (loading) {
@@ -78,7 +56,7 @@ export default function Products() {
     return buttons;
   }
   function handleButton(page: number) {
-    dispath(currentPage(page));
+    dispatch(currentPage(page));
   }
 
   function truncateText(text: string, limit: number): string {
