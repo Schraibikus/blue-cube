@@ -6,6 +6,9 @@ import { useEffect, useState } from "react";
 import styles from "@/styles/products.module.scss";
 import { useRouter } from "next/router";
 
+import { useAppDispatch, useAppSelector } from "@/hooks/redux";
+import { currentPage, nextPage } from "@/store/pageSlice";
+
 export const API_URL = "https://skillfactory-task.detmir.team/products";
 
 export interface ProductsItem {
@@ -19,12 +22,23 @@ export interface ProductsItem {
 }
 
 export default function Products() {
+  const LIMIT_PAGES = 14;
+
+  const dispath = useAppDispatch();
+  const page = useAppSelector((state) => state.page.page);
+
+  const nextPages = () => {
+    dispath(nextPage(1));
+  };
+
+  const undoPages = () => {
+    dispath(nextPage(-1));
+  };
+
   const { push } = useRouter();
 
   const [items, setItems] = useState<ProductsItem[]>([]);
   const [loading, setLoading] = useState(true); //убрать на финале - нужно только для отладки
-
-  const [currentPage, setCurrentPage] = useState(1);
 
   const load = async (page: number) => {
     try {
@@ -38,8 +52,8 @@ export default function Products() {
   };
 
   useEffect(() => {
-    load(currentPage);
-  }, [currentPage]);
+    load(page);
+  }, [page]);
 
   //убрать на финале - нужно только для отладки
   if (loading) {
@@ -48,12 +62,12 @@ export default function Products() {
 
   function createButtons() {
     const buttons = [];
-    for (let i = 0; i < 14; i++) {
+    for (let i = 0; i < LIMIT_PAGES; i++) {
       buttons.push(
         <button
           key={i}
           className={`${styles.pagination__button}${
-            i + 1 === currentPage ? ` ${styles.pagination__button_active}` : ""
+            i + 1 === page ? ` ${styles.pagination__button_active}` : ""
           }`}
           onClick={() => handleButton(i)}
         >
@@ -64,7 +78,7 @@ export default function Products() {
     return buttons;
   }
   function handleButton(page: number) {
-    setCurrentPage(page + 1);
+    dispath(currentPage(page));
   }
 
   function truncateText(text: string, limit: number): string {
@@ -125,8 +139,8 @@ export default function Products() {
         <button
           className={styles.pagination__button}
           type="button"
-          disabled={currentPage === 1}
-          onClick={() => setCurrentPage(currentPage - 1)}
+          disabled={page === 1}
+          onClick={() => undoPages()}
         >
           <Image
             src="/svg/arrow-left.svg"
@@ -139,8 +153,8 @@ export default function Products() {
         <button
           className={styles.pagination__button}
           type="button"
-          disabled={currentPage === 14}
-          onClick={() => setCurrentPage(currentPage + 1)}
+          disabled={page === LIMIT_PAGES}
+          onClick={() => nextPages()}
         >
           <Image
             src="/svg/arrow-right.svg"
