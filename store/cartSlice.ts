@@ -1,94 +1,80 @@
-// import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Item } from "./itemsSlice";
+import axios from "axios";
 
-// import { CartTotal, CartItemType } from "@/types";
+const API_URL = "https://skillfactory-task.detmir.team";
 
-// const initialState: CartTotal = {
-//   items: [],
-//   total: 0,
-// };
+export type CartItem = {
+  product: Item;
+  quantity: number;
+};
 
-// export const cartSlice = createSlice({
-//   name: "cart",
-//   initialState,
-//   reducers: {
-//     getCartItems(state, action: PayloadAction<any>) {
-//       state.items = action.payload;
-//       action.payload.forEach((item: CartItemType) => {
-//         state.total += item.book.amount * item.qantity;
-//       });
-//     },
-//     addCartItem(state, action: PayloadAction<any>) {
-//       const LSstate = localStorage.getItem("persist:root");
-//       const parsedLSstate = LSstate ? JSON.parse(LSstate) : {};
-//       const curCart = JSON.parse(parsedLSstate.cart);
-//       const itemInCart = curCart.items.find(
-//         (item: CartItemType) => item.id === action.payload.id
-//       );
+type CartItemState = {
+  cartItems: CartItem[];
+};
 
-//       if (!itemInCart) {
-//         const item: CartItemType = {
-//           id: action.payload.id,
-//           book: {
-//             imageUrl: action.payload.volumeInfo.imageLinks.thumbnail,
-//             authors: action.payload.volumeInfo.authors,
-//             title: action.payload.volumeInfo.title,
-//             averageRating: action.payload.volumeInfo.averageRating,
-//             ratingCount: action.payload.volumeInfo.ratingsCount,
-//             amount: action.payload.saleInfo?.listPrice?.amount
-//               ? action.payload.saleInfo.listPrice.amount
-//               : 0,
-//             currencyCode: action.payload.saleInfo?.listPrice?.currencyCode
-//               ? action.payload.saleInfo.listPrice.currencyCode
-//               : "",
-//           },
-//           qantity: 1,
-//           delivery: "delivery",
-//         };
-//         curCart.items.push(item);
-//       } else {
-//         itemInCart.qantity++;
-//       }
-//       const newCart = JSON.stringify(curCart);
-//       parsedLSstate.cart = newCart;
-//       localStorage.setItem("persist:root", JSON.stringify(parsedLSstate));
-//     },
-//     changeQantity(state, action: PayloadAction<any>) {
-//       const LSstate = localStorage.getItem("persist:root");
-//       const parsedLSstate = LSstate ? JSON.parse(LSstate) : {};
-//       const curCart = JSON.parse(parsedLSstate.cart);
-//       const item = curCart.items.find(
-//         (item: CartItemType) => item.id === action.payload[1]
-//       );
-//       const itemIndex = curCart.items.findIndex(
-//         (item: CartItemType) => item.id === action.payload[1]
-//       );
-//       const stateItem = state.items.find(
-//         (item: CartItemType) => item.id === action.payload[1]
-//       );
-//       const stateItemIndex = state.items.findIndex(
-//         (item: CartItemType) => item.id === action.payload[1]
-//       );
-//       if (action.payload[0] === "minus") {
-//         stateItem && stateItem.qantity--;
-//         item.qantity--;
-//         state.total -= item.book.amount;
-//         if (item.qantity <= 0) {
-//           item.qantity = 0;
-//           stateItem && (stateItem.qantity = 0);
-//           curCart.items.splice(itemIndex, 1);
-//           state.items.splice(stateItemIndex, 1);
-//         }
-//       } else {
-//         stateItem && stateItem.qantity++;
-//         item.qantity++;
-//         state.total += item.book.amount;
-//       }
-//       const newCart = JSON.stringify(curCart);
-//       parsedLSstate.cart = newCart;
-//       localStorage.setItem("persist:root", JSON.stringify(parsedLSstate));
-//     },
-//   },
-// });
+const initialState: CartItemState = {
+  cartItems: [],
+};
 
-// export const { getCartItems, addCartItem, changeQantity } = cartSlice.actions;
-// export default cartSlice.reducer;
+export const fetchCartItems = createAsyncThunk<
+  CartItem[],
+  undefined,
+  { rejectValue: string }
+>("cart/fetchCartItems", async function (_, { rejectWithValue }) {
+  const cartResponse = await axios.get(`${API_URL}/cart`, {
+    withCredentials: true,
+  });
+  if (!cartResponse) {
+    return rejectWithValue("Network response was not ok");
+  }
+  const data = await cartResponse.data.data;
+  console.log("data fetchCartItems: ", data);
+  return data;
+});
+
+export const addCartItem = createAsyncThunk<
+  CartItem,
+  { id: Item["id"]; quantity: number },
+  { rejectValue: string }
+>("cart/addCartItem", async function ({ id, quantity }, { rejectWithValue }) {
+  const cartItem = {
+    data: [
+      {
+        id: id,
+        quantity: quantity,
+      },
+    ],
+  };
+  const cartResponse = await axios.post(`${API_URL}/cart/update`, cartItem, {
+    withCredentials: true,
+  });
+  if (!cartResponse) {
+    return rejectWithValue("Network response was not ok");
+  }
+  const data = await cartResponse.data;
+  console.log("data addCartItem: ", data);
+  return data;
+});
+
+const cartSlice = createSlice({
+  name: "cart",
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder.addCase(
+      fetchCartItems.fulfilled,
+      (state, action: PayloadAction<CartItem[]>) => {
+        state.cartItems = action.payload;
+      }
+    );
+    builder.addCase(
+      addCartItem.fulfilled,
+      (state, action: PayloadAction<CartItem>) => {
+        state.cartItems.push(action.payload);
+      }
+    );
+  },
+});
+
+export default cartSlice.reducer;

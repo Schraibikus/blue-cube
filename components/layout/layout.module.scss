@@ -1,10 +1,18 @@
+.container {
+  position: relative;
+}
+
 .header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--brand-light-3);
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-inline: 32px;
-  margin-top: 12px;
-  margin-bottom: 24px;
+  padding-inline: 32px;
   font-family: var(--font-family-base);
   font-weight: 700;
 
@@ -45,4 +53,8 @@
       color: var(--brand);
     }
   }
+}
+
+.main {
+  margin-top: 84px;
 }
