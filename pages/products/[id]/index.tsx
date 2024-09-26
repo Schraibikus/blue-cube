@@ -24,6 +24,10 @@ export async function getServerSideProps({
 }
 
 export default function Item({ productsItem }: ItemProps) {
+  const addToCart = (id: string) => {
+    console.log(id);
+  };
+
   return (
     <Layout>
       <div className={styles.product}>
@@ -68,7 +72,7 @@ export default function Item({ productsItem }: ItemProps) {
               <button
                 type="button"
                 className={styles.product__button}
-                onClick={() => console.log(productsItem.id)}
+                onClick={() => addToCart(productsItem.id)}
               >
                 Добавить в корзину
               </button>
