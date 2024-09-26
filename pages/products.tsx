@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import { currentPage, nextPage } from "@/store/pageSlice";
 import { useEffect } from "react";
 import { fetchItems } from "@/store/itemsSlice";
+// import { fetchCartItems } from "@/store/cartSlice";
 
 export const API_URL = "https://skillfactory-task.detmir.team/products";
 
@@ -19,6 +20,8 @@ export default function Products() {
   const loading = useAppSelector((state) => state.items.loading);
   const error = useAppSelector((state) => state.items.error);
 
+  // const cart = useAppSelector((state) => state.cart.cartItems);
+
   const nextPages = () => {
     dispatch(nextPage(1));
   };
@@ -29,6 +32,7 @@ export default function Products() {
 
   useEffect(() => {
     dispatch(fetchItems(page));
+    // dispatch(fetchCartItems());
   }, [dispatch, page]);
 
   //убрать на финале - нужно только для отладки

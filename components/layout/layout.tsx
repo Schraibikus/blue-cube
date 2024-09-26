@@ -7,11 +7,12 @@ import clsx from "clsx";
 
 import "@/styles/globals.scss";
 import styles from "@/components/layout/layout.module.scss";
+import { useAppSelector } from "@/hooks/redux";
 
 export default function Layout({ children }: PropsWithChildren) {
   const router = useRouter();
+  const cartCount = useAppSelector((state) => state.cart.cartItems.length);
 
-  const cartCount = 0;
   return (
     <>
       <Head>

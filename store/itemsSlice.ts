@@ -34,7 +34,9 @@ export const fetchItems = createAsyncThunk<
   number,
   { rejectValue: string }
 >("items/fetchItems", async function (page, { rejectWithValue }) {
-  const itemsResponse = await axios.get(`${API_URL}?page=${page}&limit=15`);
+  const itemsResponse = await axios.get(`${API_URL}?page=${page}&limit=15`, {
+    withCredentials: true,
+  });
   if (!itemsResponse) {
     return rejectWithValue("Network response was not ok");
   }
@@ -51,10 +53,13 @@ const itemsSlice = createSlice({
       state.loading = true;
       state.error = null;
     });
-    builder.addCase(fetchItems.fulfilled, (state, action) => {
-      state.loading = false;
-      state.items = action.payload;
-    });
+    builder.addCase(
+      fetchItems.fulfilled,
+      (state, action: PayloadAction<Item[]>) => {
+        state.loading = false;
+        state.items = action.payload;
+      }
+    );
     builder.addMatcher(isError, (state, action: PayloadAction<string>) => {
       state.error = action.payload;
       state.loading = false;
