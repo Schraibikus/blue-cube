@@ -2,6 +2,7 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import pageReducer from "./pageSlice";
 import itemsReducer from "./itemsSlice";
 import cartReducer from "./cartSlice";
+import quantityReducer from "./quantitySlice";
 
 const rootReducer = combineReducers({
   page: pageReducer,
