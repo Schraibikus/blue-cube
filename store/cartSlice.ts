@@ -1,8 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Item } from "./itemsSlice";
 import axios from "axios";
-
-const API_URL = "https://skillfactory-task.detmir.team";
+import { API_URL } from "@/constants";
 
 export type CartItem = {
   product: Item;
@@ -11,10 +10,12 @@ export type CartItem = {
 
 type CartItemState = {
   cartItems: CartItem[];
+  cartTotal: number;
 };
 
 const initialState: CartItemState = {
   cartItems: [],
+  cartTotal: 0,
 };
 
 export const fetchCartItems = createAsyncThunk<
@@ -60,7 +61,14 @@ export const addCartItem = createAsyncThunk<
 const cartSlice = createSlice({
   name: "cart",
   initialState,
-  reducers: {},
+  reducers: {
+    changeCartTotal(state, action: PayloadAction<CartItem[]>) {
+      state.cartItems = action.payload;
+      action.payload.forEach((item: CartItem) => {
+        state.cartTotal += item.quantity * item.product.price;
+      });
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(
       fetchCartItems.fulfilled,
@@ -77,4 +85,5 @@ const cartSlice = createSlice({
   },
 });
 
+export const { changeCartTotal } = cartSlice.actions;
 export default cartSlice.reducer;

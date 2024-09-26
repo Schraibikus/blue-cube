@@ -4,8 +4,9 @@ import {
   createSlice,
   PayloadAction,
 } from "@reduxjs/toolkit";
-import { API_URL } from "@/pages/products";
 import axios from "axios";
+
+import { API_URL } from '@/constants'
 
 export type Item = {
   id: string;
@@ -34,9 +35,12 @@ export const fetchItems = createAsyncThunk<
   number,
   { rejectValue: string }
 >("items/fetchItems", async function (page, { rejectWithValue }) {
-  const itemsResponse = await axios.get(`${API_URL}?page=${page}&limit=15`, {
-    withCredentials: true,
-  });
+  const itemsResponse = await axios.get(
+    `${API_URL}/products?page=${page}&limit=15`,
+    {
+      withCredentials: true,
+    }
+  );
   if (!itemsResponse) {
     return rejectWithValue("Network response was not ok");
   }

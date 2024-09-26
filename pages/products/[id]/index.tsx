@@ -1,14 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
-import Layout from "@/components/layout/layout";
-import styles from "@/styles/products.module.scss";
-import { API_URL } from "@/pages/products";
 import axios from "axios";
 import DOMPurify from "dompurify";
-import { Item as ProductsItem } from "@/store/itemsSlice";
 import { useState } from "react";
-import { useAppDispatch } from "@/hooks/redux";
+import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import { addCartItem } from "@/store/cartSlice";
+
+import { Item as ProductsItem } from "@/store/itemsSlice";
+import styles from "@/styles/products.module.scss";
+import Layout from "@/components/layout/layout";
+import { API_URL } from "@/constants";
 
 interface ItemProps {
   productsItem: ProductsItem;
@@ -17,9 +18,9 @@ interface ItemProps {
 export async function getServerSideProps({
   params,
 }: {
-  params: { id: number };
+  params: { id: string };
 }) {
-  const url = `${API_URL}/${params.id}`;
+  const url = `${API_URL}/products/${params.id}`;
   const { data } = await axios.get<ProductsItem>(url);
   return {
     props: { productsItem: data },

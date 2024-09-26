@@ -8,13 +8,11 @@ import s from "@/styles/cart.module.scss";
 
 export default function Cart() {
   const cart = useAppSelector((state) => state.cart.cartItems);
-  console.log("cart in Cart: ", cart);
+  // console.log("cart in Cart: ", cart);
 
   useEffect(() => {
     fetchCartItems();
   }, []);
-
-  // cart.flat().map((item) => console.log(item.product));
 
   return (
     <Layout>
