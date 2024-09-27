@@ -29,8 +29,7 @@ export const fetchCartItems = createAsyncThunk<
   if (!cartResponse) {
     return rejectWithValue("Network response was not ok");
   }
-  const data = await cartResponse.data.data;
-  console.log("data fetchCartItems: ", data);
+  const data = await cartResponse.data;
   return data;
 });
 
@@ -54,7 +53,7 @@ export const addCartItem = createAsyncThunk<
     return rejectWithValue("Network response was not ok");
   }
   const data = await cartResponse.data;
-  console.log("data addCartItem: ", data);
+  // console.log(data);
   return data;
 });
 
@@ -62,12 +61,12 @@ const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    changeCartTotal(state, action: PayloadAction<CartItem[]>) {
-      state.cartItems = action.payload;
-      action.payload.forEach((item: CartItem) => {
-        state.cartTotal += item.quantity * item.product.price;
-      });
-    },
+    // changeCartTotal(state, action: PayloadAction<CartItem[]>) {
+    //   state.cartItems = action.payload;
+    //   action.payload.forEach((item: CartItem) => {
+    //     state.cartTotal += item.quantity * item.product.price;
+    //   });
+    // },
   },
   extraReducers: (builder) => {
     builder.addCase(
@@ -85,5 +84,5 @@ const cartSlice = createSlice({
   },
 });
 
-export const { changeCartTotal } = cartSlice.actions;
+// export const { changeCartTotal } = cartSlice.actions;
 export default cartSlice.reducer;

@@ -3,7 +3,7 @@ import Link from "next/link";
 import axios from "axios";
 import DOMPurify from "dompurify";
 import { useState } from "react";
-import { useAppDispatch, useAppSelector } from "@/hooks/redux";
+import { useAppDispatch } from "@/hooks/redux";
 import { addCartItem } from "@/store/cartSlice";
 
 import { Item as ProductsItem } from "@/store/itemsSlice";

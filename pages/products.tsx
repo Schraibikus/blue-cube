@@ -77,6 +77,7 @@ export default function Products() {
                 alt={truncateText(elem.title, 2)}
                 width={250}
                 height={250}
+                priority={true}
                 onError={() => {
                   const imageElement = document.querySelector(
                     `.card[data-id="${elem.id}"] img`
