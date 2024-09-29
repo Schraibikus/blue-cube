@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import Layout from "@/components/layout/layout";
 import styles from "@/styles/products.module.scss";
@@ -11,6 +11,12 @@ import truncateText from "@/utils/truncateText";
 
 export default function Products() {
   const LIMIT_PAGES = 14;
+
+  const [defaultImage, setDefaultImage] = useState("/not-image.jpg");
+  const replaceImage = (error) => {
+    error.target.src = defaultImage;
+    setDefaultImage("/not-image.jpg");
+  };
 
   const { push } = useRouter();
   const dispatch = useAppDispatch();
@@ -77,15 +83,7 @@ export default function Products() {
                 alt={truncateText(elem.title, 2)}
                 width={250}
                 height={250}
-                priority={true}
-                onError={() => {
-                  const imageElement = document.querySelector(
-                    `.card[data-id="${elem.id}"] img`
-                  );
-                  if (imageElement) {
-                    (imageElement as HTMLImageElement).src = "/not-image.jpg";
-                  }
-                }}
+                // onError={replaceImage}
               />
               <div className={styles.card__title}>{elem.title}</div>
               <div className={styles.card__rating}>
